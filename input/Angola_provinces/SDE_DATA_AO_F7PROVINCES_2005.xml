@@ -1,0 +1,349 @@
+<metadata xml:lang="en">
+  <Esri>
+    <CreaDate>20080630</CreaDate>
+    <CreaTime>16590900</CreaTime>
+    <SyncOnce>FALSE</SyncOnce>
+    <SyncDate>20080630</SyncDate>
+    <SyncTime>16591000</SyncTime>
+    <ModDate>20080630</ModDate>
+    <ModTime>16591000</ModTime>
+    <MetaID>{EC992CC5-839B-474F-9E76-F5197FE8581C}</MetaID>
+    <Sync>FALSE</Sync>
+  </Esri>
+  <idinfo>
+    <native Sync="TRUE">Microsoft Windows XP Version 5.1 (Build 2600) Service Pack 2; ESRI ArcCatalog 9.2.4.1420</native>
+    <descript>
+      <langdata Sync="TRUE">en</langdata>
+      <abstract>Angola provinces</abstract>
+      <purpose>Identification of provinces in this region</purpose>
+    </descript>
+    <citation>
+      <citeinfo>
+        <origin>UNDP - CNIDAH</origin>
+        <pubdate>20050530</pubdate>
+        <title Sync="FALSE">Angola (Provinces, 2005)</title>
+        <ftname Sync="TRUE">AO_F7PROVINCES_2005</ftname>
+        <geoform Sync="TRUE">vector digital data</geoform>
+        <onlink>http://www.sahims.net/gis/GIS%20input/GIS_library_Angola.asp?cmd=reset</onlink>
+        <onlink>Server=arrowsmith.mit.edu; Service=5150; Database=oracle</onlink>
+        <origin urn="http://id.worldcat.org/fast/529396">United Nations Development Programme</origin>
+        <origin>CNIDAH (National Inter-Sectoral Commission for Demining and Humanitarian Assistance)</origin>
+        <pubdata/>
+        <pubinfo>
+          <publish/>
+        </pubinfo>
+      </citeinfo>
+    </citation>
+    <timeperd>
+      <current>ground condition</current>
+      <timeinfo>
+        <sngdate>
+          <caldate>20050530</caldate>
+        </sngdate>
+      </timeinfo>
+    </timeperd>
+    <status>
+      <progress>Complete</progress>
+      <update>As needed</update>
+    </status>
+    <spdom>
+      <bounding>
+        <westbc Sync="TRUE">11.674625</westbc>
+        <eastbc Sync="TRUE">24.090957</eastbc>
+        <northbc Sync="TRUE">-4.388041</northbc>
+        <southbc Sync="TRUE">-18.041512</southbc>
+      </bounding>
+      <lboundng>
+        <leftbc Sync="TRUE">11.674625</leftbc>
+        <rightbc Sync="TRUE">24.090957</rightbc>
+        <bottombc Sync="TRUE">-18.041512</bottombc>
+        <topbc Sync="TRUE">-4.388041</topbc>
+      </lboundng>
+    </spdom>
+    <keywords>
+      <theme>
+		<themekt/>searchFAST
+		<themekey urn="http://id.worldcat.org/fast/796826">Administrative and political divisions</themekey>
+      </theme>
+	  
+	  <theme>
+	  <themekt/>ISO 19115 Topic Category
+	  <themekey>boundaries</themekey></theme>
+      <place>
+        <placekt/>searchFAST
+        <placekey urn="http://id.worldcat.org/fast/1208401">Angola</placekey>
+        <placekey urn="http://id.worldcat.org/fast/1239509">Africa</placekey>
+      </place>
+      <temporal>
+        <tempkey>20050530</tempkey>
+      </temporal>
+    </keywords>
+    <accconst>Unrestricted Access Online N/A</accconst>
+    <useconst>N/A</useconst>
+    <natvform Sync="TRUE">SDE Feature Class</natvform>
+    <ptcontac>
+      <cntinfo>
+        <cntorgp>
+          <cntorg>UNDP - CNIDAH</cntorg>
+          <cntper>Pedro Toko Ribeiro</cntper>
+        </cntorgp>
+        <cntvoice>+244923418436</cntvoice>
+        <cntfax>+01019287521917</cntfax>
+        <cntemail>prebeiro@cnidah.gv.ao</cntemail>
+      </cntinfo>
+    </ptcontac>
+  </idinfo>
+  <dataIdInfo>
+    <envirDesc Sync="TRUE">Microsoft Windows XP Version 5.1 (Build 2600) Service Pack 2; ESRI ArcCatalog 9.2.4.1420</envirDesc>
+    <dataLang>
+      <languageCode Sync="TRUE" value="en"/>
+    </dataLang>
+    <idCitation>
+      <resTitle Sync="TRUE">SDE_DATA.AO_F7PROVINCES_2005</resTitle>
+      <presForm>
+        <PresFormCd Sync="TRUE" value="005"/>
+      </presForm>
+    </idCitation>
+    <spatRpType>
+      <SpatRepTypCd Sync="TRUE" value="001"/>
+    </spatRpType>
+    <dataExt>
+      <geoEle>
+        <GeoBndBox esriExtentType="native">
+          <westBL Sync="TRUE">11.674625</westBL>
+          <eastBL Sync="TRUE">24.090957</eastBL>
+          <northBL Sync="TRUE">-4.388041</northBL>
+          <southBL Sync="TRUE">-18.041512</southBL>
+          <exTypeCode Sync="TRUE">1</exTypeCode>
+        </GeoBndBox>
+      </geoEle>
+    </dataExt>
+    <geoBox esriExtentType="decdegrees">
+      <westBL Sync="TRUE">11.674625</westBL>
+      <eastBL Sync="TRUE">24.090957</eastBL>
+      <northBL Sync="TRUE">-4.388041</northBL>
+      <southBL Sync="TRUE">-18.041512</southBL>
+      <exTypeCode Sync="TRUE">1</exTypeCode>
+    </geoBox>
+  </dataIdInfo>
+  <metainfo>
+    <langmeta Sync="TRUE">en</langmeta>
+    <metstdn Sync="TRUE">FGDC Content Standards for Digital Geospatial Metadata</metstdn>
+    <metstdv Sync="TRUE">FGDC-STD-001-1998</metstdv>
+    <mettc Sync="TRUE">local time</mettc>
+    <metc>
+      <cntinfo>
+        <cntorgp>
+          <cntper>Lawrence Makhoba</cntper>
+          <cntorg>SAHIMS</cntorg>
+        </cntorgp>
+        <cntaddr>
+          <addrtype>mailing and physical address</addrtype>
+          <city>Johannesburg</city>
+          <state>Gauteng</state>
+          <postal>2157</postal>
+          <country>South Africa</country>
+          <address>11 Naivasha road</address>
+        </cntaddr>
+        <cntvoice>+27115171539</cntvoice>
+        <cntfax>+27115171690</cntfax>
+        <cntemail>lawrence.m@sahims.net</cntemail>
+      </cntinfo>
+    </metc>
+    <metd Sync="TRUE">20080630</metd>
+  </metainfo>
+  <mdLang>
+    <languageCode Sync="TRUE" value="en"/>
+  </mdLang>
+  <mdStanName Sync="TRUE">ISO 19115 Geographic Information - Metadata</mdStanName>
+  <mdStanVer Sync="TRUE">DIS_ESRI1.0</mdStanVer>
+  <mdChar>
+    <CharSetCd Sync="TRUE" value="004"/>
+  </mdChar>
+  <mdHrLv>
+    <ScopeCd Sync="TRUE" value="005"/>
+  </mdHrLv>
+  <mdHrLvName Sync="TRUE">dataset</mdHrLvName>
+  <distinfo>
+    <resdesc Sync="TRUE">Downloadable Data</resdesc>
+    <stdorder>
+      <digform>
+        <digtinfo>
+          <transize Sync="TRUE">0.445</transize>
+          <dssize Sync="TRUE">0.445</dssize>
+        </digtinfo>
+      </digform>
+    </stdorder>
+    <distrib>
+      <cntinfo>
+        <cntperp>
+          <cntper>GIS Specialist</cntper>
+          <cntorg>GIS Lab, MIT Libraries</cntorg>
+        </cntperp>
+        <cntpos>GIS Specialist</cntpos>
+        <cntaddr>
+          <addrtype>mailing and physical address</addrtype>
+          <address>77 Massachusetts Avenue, Rotch Library, 7-238</address>
+          <city>Cambridge</city>
+          <state>MA </state>
+          <postal>02139-4307</postal>
+          <country>USA</country>
+        </cntaddr>
+        <cntvoice>617-258-5598</cntvoice>
+        <cntemail>gishelp@mit.edu</cntemail>
+      </cntinfo>
+    </distrib>
+  </distinfo>
+  <distInfo>
+    <distributor>
+      <distorTran>
+        <onLineSrc>
+          <orDesc Sync="TRUE">002</orDesc>
+          <linkage Sync="TRUE">Server=arrowsmith.mit.edu; Service=5150; Database=oracle; User=sde_data; Version=SDE.DEFAULT</linkage>
+          <protocol Sync="TRUE">ArcSDE Connection</protocol>
+        </onLineSrc>
+        <transSize Sync="TRUE">0.445</transSize>
+      </distorTran>
+      <distorFormat>
+        <formatName Sync="TRUE">SDE Feature Class</formatName>
+      </distorFormat>
+    </distributor>
+  </distInfo>
+  <spdoinfo>
+    <direct Sync="TRUE">Vector</direct>
+    <ptvctinf>
+      <esriterm Name="SDE_DATA.AO_F7PROVINCES_2005">
+        <efeatyp Sync="TRUE">Simple</efeatyp>
+        <efeageom Sync="TRUE">Polygon</efeageom>
+        <esritopo Sync="TRUE">FALSE</esritopo>
+        <efeacnt Sync="TRUE">16</efeacnt>
+        <spindex Sync="TRUE">TRUE</spindex>
+        <linrefer Sync="TRUE">FALSE</linrefer>
+      </esriterm>
+      <sdtsterm Name="SDE_DATA.AO_F7PROVINCES_2005">
+        <sdtstype Sync="TRUE">G-polygon</sdtstype>
+        <ptvctcnt Sync="TRUE">16</ptvctcnt>
+      </sdtsterm>
+    </ptvctinf>
+  </spdoinfo>
+  <spref>
+    <horizsys>
+      <cordsysn>
+        <geogcsn Sync="TRUE">GCS_North_American_1927</geogcsn>
+      </cordsysn>
+      <geograph>
+        <geogunit Sync="TRUE">Decimal degrees</geogunit>
+        <latres Sync="TRUE">0.000000</latres>
+        <longres Sync="TRUE">0.000000</longres>
+      </geograph>
+      <geodetic>
+        <horizdn Sync="TRUE">North American Datum of 1927</horizdn>
+        <ellips Sync="TRUE">Clarke 1866</ellips>
+        <semiaxis Sync="TRUE">6378206.400000</semiaxis>
+        <denflat Sync="TRUE">294.978698</denflat>
+      </geodetic>
+    </horizsys>
+    <vertdef>
+      <altsys>
+        <altenc Sync="TRUE">Explicit elevation coordinate included with horizontal coordinates</altenc>
+        <altres Sync="TRUE">1.000000</altres>
+      </altsys>
+    </vertdef>
+  </spref>
+  <refSysInfo>
+    <RefSystem>
+      <refSysID>
+        <identCode Sync="TRUE">GCS_North_American_1927</identCode>
+      </refSysID>
+    </RefSystem>
+  </refSysInfo>
+  <spatRepInfo>
+    <VectSpatRep>
+      <topLvl>
+        <TopoLevCd Sync="TRUE" value="001"/>
+      </topLvl>
+      <geometObjs Name="SDE_DATA.AO_F7PROVINCES_2005">
+        <geoObjTyp>
+          <GeoObjTypCd Sync="TRUE" value="001"/>
+        </geoObjTyp>
+        <geoObjCnt Sync="TRUE">16</geoObjCnt>
+      </geometObjs>
+    </VectSpatRep>
+  </spatRepInfo>
+  <eainfo>
+    <detailed Name="SDE_DATA.AO_F7PROVINCES_2005">
+      <enttyp>
+        <enttypl Sync="TRUE">SDE_DATA.AO_F7PROVINCES_2005</enttypl>
+        <enttypt Sync="TRUE">Feature Class</enttypt>
+        <enttypc Sync="TRUE">16</enttypc>
+      </enttyp>
+      <attr>
+        <attrlabl Sync="TRUE">NAME</attrlabl>
+        <attalias Sync="TRUE">NAME</attalias>
+        <attrtype Sync="TRUE">String</attrtype>
+        <attwidth Sync="TRUE">25</attwidth>
+        <attrdef>Name of province</attrdef>
+        <attrdefs/>
+      </attr>
+      <attr>
+        <attrlabl Sync="TRUE">SHPAREASQM</attrlabl>
+        <attalias Sync="TRUE">SHPAREASQM</attalias>
+        <attrtype Sync="TRUE">Number</attrtype>
+        <attwidth Sync="TRUE">16</attwidth>
+        <attrdef>Area of shape in square meters</attrdef>
+      </attr>
+      <attr>
+        <attrlabl Sync="TRUE">CODE_PROV</attrlabl>
+        <attalias Sync="TRUE">CODE_PROV</attalias>
+        <attrtype Sync="TRUE">String</attrtype>
+        <attwidth Sync="TRUE">16</attwidth>
+        <attrdef>Province Code</attrdef>
+      </attr>
+      <attr>
+        <attrlabl Sync="TRUE">OBJECTID</attrlabl>
+        <attalias Sync="TRUE">OBJECTID</attalias>
+        <attrtype Sync="TRUE">OID</attrtype>
+        <attwidth Sync="TRUE">4</attwidth>
+        <atprecis Sync="TRUE">10</atprecis>
+        <attscale Sync="TRUE">0</attscale>
+        <attrdef Sync="TRUE">Internal feature number.</attrdef>
+        <attrdefs Sync="TRUE">ESRI</attrdefs>
+        <attrdomv>
+          <udom Sync="TRUE">Sequential unique whole numbers that are automatically generated.</udom>
+        </attrdomv>
+      </attr>
+    </detailed>
+  </eainfo>
+  <mdDateSt Sync="TRUE">20080630</mdDateSt>
+  <dataqual>
+    <lineage>
+      <procstep>
+        <procdesc Sync="TRUE">Metadata imported.</procdesc>
+        <srcused Sync="TRUE">W:\workspace\africa\ao_f7provinces_2005.shp.xml</srcused>
+        <date Sync="TRUE">20080630</date>
+        <time Sync="TRUE">16590900</time>
+      </procstep>
+    </lineage>
+  </dataqual>
+  <distinfo>
+    <distliab>Although this data is being distributed by MIT, no warranty expressed or implied is made by the Institute as to the accuracy of the data and related materials. The act of distribution shall not constitute any such warranty, and no responsibility is assumed by the Institute in the use of this data, or related materials.</distliab>
+    <distrib>
+      <cntinfo>
+        <cntorgp>
+          <cntorg>GIS Lab, MIT Libraries</cntorg>
+        </cntorgp>
+        <cntpos>GIS Specialist</cntpos>
+        <cntaddr>
+          <addrtype>mailing and physical address</addrtype>
+          <address>77 Massachusetts Avenue, Rotch Library, 7-238</address>
+          <city>Cambridge</city>
+          <state>MA</state>
+          <postal>02139-4307</postal>
+          <country>USA</country>
+        </cntaddr>
+        <cntvoice>617-258-5598</cntvoice>
+        <cntemail>gishelp@mit.edu</cntemail>
+      </cntinfo>
+    </distrib>
+  </distinfo>
+</metadata>
