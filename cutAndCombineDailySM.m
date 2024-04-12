@@ -1,4 +1,4 @@
-function [SM_combined,lat,lon] = cutAndCombineDailySM(folder,startDate,endDate,boundary)
+function [SM_combined,coords,missingDates] = cutAndCombineDailySM(folder,startDate,endDate,boundary)
 
 % Function that combines individual SMAP files (.mat) into one matrix given
 % folder directory and date range (requires access to daily SMAP files)
@@ -9,7 +9,9 @@ function [SM_combined,lat,lon] = cutAndCombineDailySM(folder,startDate,endDate,b
 %        endDate = desired end date in array [yyyy,mm,dd]
 %        boundary = shapefile (geographic data structure array) 
 %                   OR bounding box [minlat,maxlat; minlon,maxlon]
-% OUTPUT: SM_combine = SMAP matrix (size: Nlat x Nlon x Ndates)
+% OUTPUT: SM_combined = structure array with fields SM and Date
+%         coords = structure array with fields Lat and Lon
+%         missingDates = array of dates with no SMAP data
 
 % Load SMAP latitude and longitude coordinates in input folder
 load([cd '/input/SMAPCenterCoordinates9KM.mat'],'SMAPCenterLatitudes','SMAPCenterLongitudes')
@@ -19,7 +21,12 @@ datet = datetime(startDate(1),startDate(2),startDate(3)) : ...
         datetime(endDate(1),endDate(2),endDate(3));
 [yr,mo,dy] = ymd(datet); % Separate year, month, day arrays
 
-% Loop to initialize size of combined array 
+% Pre-allocate structure array with combined soil moisture and date
+SM_combined = struct('SM',cell(1,length(datet)),'Date',cell(1,length(datet)));
+% Keep track of dates with no data
+missingDates = [];
+
+% Loop to find lat-lon of boundary aligned with SMAP (runs cut2D once)
 for i = 1:length(datet)
     % Construct correct date
     yr_i = num2str(yr(i)); 
@@ -27,18 +34,19 @@ for i = 1:length(datet)
     dy_i = num2str(dy(i),'%02d'); 
     filename = ['SMAP_R18290_005_',yr_i,'_',mo_i,'_',dy_i,'.mat'];
 
+    % Check if file exists (data is not missing)
     if isfile(fullfile(folder,filename))
         data = load(fullfile(folder,filename));
-        SM_am = data.SM_am; % Pick the fieldname to suit.
-        % test = cut(SM_am,SMAPCenterLatitudes,SMAPCenterLongitudes,boundary);
-        [SM_cut,lat,lon,insideBound,rowIndexRange,columnIndexRange] = cut2D(SM_am,SMAPCenterLatitudes,SMAPCenterLongitudes,boundary);
-        % disp(['Size of SM: ',num2str(size(SM_cut)),', Lat: ',num2str(size(lat)),', Lon: ',num2str(size(lon)),', 1 out: ',num2str(size(test))])%All should be same size
-        SM_combined = NaN(size(SM_cut,1),size(SM_cut,2),length(datet));
-        break
+        SM_am = data.SM_am; % Find the pass of SM wanted
+        % Cut soil moisture based on boundary input
+        [~,lat,lon,insideBound,rowIndexRange,columnIndexRange] = cut2D(SM_am,SMAPCenterLatitudes,SMAPCenterLongitudes,boundary);
+        noData = NaN(size(lat)); % Create array to represent days with no data
+        % Add latitude and longitude to struct array
+        coords.Lat = lat; coords.Lon = lon; 
+        break % break for loop once cut2D is run (coordinates aligned)
     end %if file exists
 end %idate
 
-%dates = cell(1,length(datet));
 
 for i = 1:length(datet)
     % Construct correct date
@@ -46,19 +54,21 @@ for i = 1:length(datet)
     mo_i = num2str(mo(i),'%02d'); %Add zero if single digit
     dy_i = num2str(dy(i),'%02d'); 
     filename = ['SMAP_R18290_005_',yr_i,'_',mo_i,'_',dy_i,'.mat'];
+    % Add date to structure array of combined soil moisture
+    SM_combined(i).Date = datetime(yr(i),mo(i),dy(i));
 
+    % Check if file exists (data is not missing)
     if isfile(fullfile(folder,filename))
         data = load(fullfile(folder,filename));
-        SM_am = data.SM_am; % pick the fieldname to suit.
+        SM_am = data.SM_am; % Find the pass of SM wanted
         
-        % Assumes data coordinates are aligned
+        % Assumes data coordinates are aligned (cut SM according to previous for loop's range)
         SM_cut = SM_am(rowIndexRange,columnIndexRange).*insideBound(rowIndexRange,columnIndexRange);
-
-        % [SM_cut,lat,lon] = cut2D(SM_am,SMAPCenterLatitudes,SMAPCenterLongitudes,boundary);
-        SM_combined(:,:,i) = SM_cut;
-        % dates{1,i} = data.tday;
-    % else
-    %     dates{2,i} = datetime(yr(i),mo(i),dy(i));% Check if it gets correct missing dates
+        SM_combined(i).SM = SM_cut; 
+        
+    else % Fill SM with NaN if file does not exist
+        SM_combined(i).SM = noData; 
+        missingDates = [missingDates; datetime(yr(i),mo(i),dy(i))];
     end
     
     % To display progress in code

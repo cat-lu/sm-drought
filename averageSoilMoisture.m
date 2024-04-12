@@ -1,40 +1,67 @@
-function [averageSM,endDatePeriod] = averageSoilMoisture(SM_matrix,startDate,endDate,dt)
+function [avgSM,missingDatePeriods] = averageSoilMoisture(SM_combined,dt,minObservedDates)
 
 % Function that returns averages the given soil moisture data over time 
 % block dt
 
-% INPUT: SM_matrix = SMAP matrix (size: Nlat x Nlon x Ndates)
-%        startDate = desired start date in array [yyyy,mm,dd]
-%        endDate = desired end date in array [yyyy,mm,dd]
+% INPUT: SM_combined = structure array with fields SM and Date
+%                      (dates in SM_combined.Date are desired range)
 %        dt = time step (over which soil moisture is averaged)
-% OUTPUT: averageSM = averaged soil moisture matrix 
-%                     (size: Nlat x Nlon x floor(Ndates/dt))
-%         endDatePeriod = array of end dates (last date of each time block)
+%        minObservedDates = minimum number of dates with observed SMAP
+%                           values in a dt-time block to qualify for averaging 
+% OUTPUT: avgSM = structure array with fields SM, startDate,
+%                 centerDate, endDate
+%         missingDatePeriods = date periods with no data or not enough days
+%                              (<= minObservedDates) for averaging
 
-% Range of desired inputted dates
-dateRange = datetime(startDate(1),startDate(2),startDate(3)):datetime(endDate(1),endDate(2),endDate(3));
+% Find number of dates in SM_combined and calculate # of time blocks
+Ndate = length(SM_combined); % Number of dates
+Nperiod = floor(Ndate/dt); % Number of time blocks
+[Nlat,Nlon] = size(SM_combined(1).SM);
 
-% Accumulate in Time Blocks of size dt and Mark End-Date of Block
-[Nlat,Nlon,Ndate] = size(SM_matrix); 
-Nperiod = floor(Ndate/dt);
-averageSM = NaN(Nlat,Nlon,Nperiod);
-endDatePeriod = NaT(Nperiod,1);
+% Initialize outputs
+avgSM = struct('SM',cell(1,Nperiod),'startDate',cell(1,Nperiod),...
+        'centerDate',cell(1,Nperiod),'endDate',cell(1,Nperiod));
+missingDatePeriods = [];
 
-i_t = 0; %Initialize iterations for number of periods
+dayCount = 0; % Initialize day counter within dt-time block
+SM_period = NaN(Nlat,Nlon,dt); % Initialize SM matrix of dt-time block
+periodCount = 1; % Initialize date period counter
+nullCount = 0; % Initialize counter for arrays with no data
 
-for i = 1:dt:Ndate-(dt-1)
-    i_t = i_t + 1;
-    i_beg = i;
-    i_end = i+(dt-1);
-    
-    % Average soil moisture in time block of dt days (calculates mean along
-    % third dimension, omitting NaN values)
-    averageSM(:,:,i_t) = mean(SM_matrix(:,:,i_beg:i_end),3,'omitnan');
+for i = 1 : Nperiod*dt
+    dayCount = dayCount+1;
+    SM_period(:,:,dayCount) = SM_combined(i).SM; % Add SM to temp matrix
 
-    % Track end day of dt time block
-    endDatePeriod(i_t,1) = dateRange(i_end);
+    if isequaln(SM_period(:,:,dayCount),NaN(Nlat,Nlon)) % If equal to empty array
+        nullCount = nullCount+1;
+    end
 
-    % Track progress of code block
-    disp(['Date period ',num2str(i_t),' of ',num2str(Nperiod)])
-end
+    if dayCount == dt
+        % Track start, center and end dates of dt-time block
+        i_beg = i-dt+1; 
+        i_center = floor((i_beg+i)/2);
+        avgSM(periodCount).startDate = SM_combined(i_beg).Date;
+        avgSM(periodCount).centerDate = SM_combined(i_center).Date;
+        avgSM(periodCount).endDate = SM_combined(i).Date;
+        
+        if dt-nullCount >= minObservedDates
+            % Average soil moisture in time block of dt days (calculates mean along
+            % third dimension, omitting NaN values)
+            avgSM(periodCount).SM = mean(SM_period,3,'omitnan');
+        else
+            avgSM(periodCount).SM = NaN(Nlat,Nlon);
+            missingRange = SM_combined(i_beg).Date : SM_combined(i).Date;
+            missingDatePeriods = [missingDatePeriods; missingRange];
+        end
+
+        % Track progress of code block
+        disp(['Date period ',num2str(periodCount),' of ',num2str(Nperiod)])
+        
+        dayCount = 0; % Reset counter after each time block
+        nullCount = 0;
+        periodCount = periodCount+1;
+        SM_period = NaN(Nlat,Nlon,dt);
+    end
+
+end % Loop number of time blocks available
 end %function

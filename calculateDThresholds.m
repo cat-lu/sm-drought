@@ -1,69 +1,78 @@
-function [DThresholds,centerDatePeriod,a,b] = calculateDThresholds(SM_matrix,startDate,endDate,dt,porosity,pct)
+function DThresholds = calculateDThresholds(avgSM,porosity,pct,pctLabels)
 
-% Function that returns drought (D) thresholds given soil moisture data and
-% set threshold percentiles classified D0-D4 by USDM 
+% Function that returns drought (D) thresholds given averaged soil moisture data
+% and set threshold percentiles
 
-% INPUT: SM_matrix = SMAP matrix (size: Nlat x Nlon x Ndates)
-%        startDate = desired start date in array [yyyy,mm,dd]
-%        endDate = desired end date in array [yyyy,mm,dd]
-%        dt = time step 
+% INPUT: avgSM = structure array with fields SM, startDate,
+%                 centerDate, endDate
 %        porosity = porosity matrix (size: Nlat x Nlon)
-% OUTPUT: DThreshold = Drought thresholds for each month and each D 
-%                      classification (size: Nlat x Nlon x 12 x 5)
+%        pct = array of desired percentiles for beta distribution fitting
+%        pctLabels = string array of labels for desired percentiles
+% OUTPUT: DThresholds = structure array with fields Month, percentiles given
+%                      in pct, a, and b (beta distribution fitting
+%                      parameters)
 
 % Range of desired inputted dates
-dateRange = datetime(startDate(1),startDate(2),startDate(3)):datetime(endDate(1),endDate(2),endDate(3));
-Ndate = length(dateRange);
-NperiodInput = floor(Ndate/dt);
+Nperiod = length(avgSM); % Number of time periods
+[Nlat,Nlon] = size(avgSM(1).SM);
 
-[Nlat,Nlon,Nperiod] = size(SM_matrix); 
-assert(isequal(Nperiod,NperiodInput),'Time steps of soil moisture matrix and given dt do not match')
-
-% Create date array of center dates (middle of date periods)
-centerDatePeriod = NaT(Nperiod,1);
-i_t = 0;
-for i = 1:dt:Ndate-dt
-    i_t = i_t + 1;
-    i_beg = i;
-    i_end = i+(dt-1);
-    centerDatePeriod(i_t,1) = dateRange(floor((i_beg+i_end)/2));
+% Combine SM into single 3D matrix
+SM_matrix = NaN(Nlat,Nlon,Nperiod);
+for iperiod = 1:Nperiod
+    SM_matrix(:,:,iperiod) = avgSM(iperiod).SM;
 end
 
-% % Cut porosity data specific to region
-% cut2D(porosity,porosityLat,porosityLon,)
-% porosity_region = ones(size(SM_period)).*porosity;            
+assert(isequal(size(avgSM(1).SM),size(porosity)),...
+       'Sizes of SM and porosity matrices do not match')
+assert(isequal(length(pct),length(pctLabels)),...
+        'Lengths of percentiles and percentile labels provided do not match')
 
-% Initialize beta parameters for each month in year
-a = NaN(Nlat,Nlon,12); 
-b = NaN(Nlat,Nlon,12);  
-DThresholds = NaN(Nlat,Nlon,12,length(pct));         
-              
-for ilat = 1:Nlat
-    disp(['Row ' num2str(ilat) ' of ' num2str(Nlat)]) % Display progress in code block
-    for ilon = 1:Nlon
-        for i_month = 1:12
-            [~, centerMonth] = ymd(centerDatePeriod); % Find month of center dates
-            monthIndex = find(centerMonth == i_month);
-            % k_month = find(month(centerDatePeriod(:,2) == i_month); %date time vector for new data
-    
-            % Location Relative Soil Saturation in [0,1] Range    
-            monthlySM = squeeze(SM_matrix(ilat,ilon,monthIndex))./ porosity(ilat,ilon);
-            monthlySM(monthlySM>1) = NaN;
-            monthlySM(monthlySM<0) = NaN;
+% Initialize D Thresholds structure array with months
+DThresholds = struct('Month',{"Jan","Feb","Mar","Apr","May","Jun","Jul",...
+                              "Aug","Sep","Oct","Nov","Dec"});      
+ 
+for imonth = 1:12
+    [~, monthOfCenter] = ymd([avgSM.centerDate]); % Find month of center dates
+    monthIndex = find(monthOfCenter == imonth);
+    monthlyDThresholds = NaN(Nlon,Nlat,length(pct)); % D Thresholds for 1 month, all coords
+    % Initialize beta parameters (a,b) for each month
+    a = NaN(Nlat,Nlon); 
+    b = NaN(Nlat,Nlon);
+
+    for ilat = 1:Nlat
+        % Display progress in code block
+        disp(['Row ' num2str(ilat) ' of ' num2str(Nlat) ' in Month ' num2str(imonth)])
+
+        for ilon = 1:Nlon        
+            % Location Relative Soil Saturation in [0,1] Range for 1 pixel in imonth
+            monthlyPixelSM = squeeze(SM_matrix(ilat,ilon,monthIndex))./ porosity(ilat,ilon); %#ok<FNDSB>
+            monthlyPixelSM(monthlyPixelSM>1) = NaN;
+            monthlyPixelSM(monthlyPixelSM<0) = NaN;
             % Remove NaN for betafit function
-            isNull = find(isnan(monthlySM));
-            monthlySM(isNull) = [];
-         
-            if (length(monthlySM)>10 && std(monthlySM)>0.01)
+            isNull = find(isnan(monthlyPixelSM));
+            monthlyPixelSM(isNull) = []; %#ok<FNDSB>
+            
+            if (length(monthlyPixelSM)>10 && std(monthlyPixelSM)>0.01)
                 % Maximum-Likelihood Estimate of Beta PDF Parameters
-                betaParameters = betafit(monthlySM);
-                a(ilat,ilon,i_month) = betaParameters(1);
-                b(ilat,ilon,i_month) = betaParameters(2); 
-                DThresholds(ilat,ilon,i_month,:) = betainv(pct,a(ilat,ilon,i_month),b(ilat,ilon,i_month)).*porosity(ilat,ilon);
+                betaParameters = betafit(monthlyPixelSM);
+                a(ilat,ilon) = betaParameters(1);
+                b(ilat,ilon) = betaParameters(2); 
+                % Add beta inverse result (threshold) to monthlyDThresholds
+                % (remains NaN if time series <= 10)
+                monthlyDThresholds(ilat,ilon,:) = ...
+                  betainv(pct,a(ilat,ilon),b(ilat,ilon)).*porosity(ilat,ilon);
             end % if over land
 
-        end % i_month
-    end % ilon
-end % ilat
+        end % ilon
+    end % ilat
+
+    for ipct = 1:length(pct) % Add to structure array for each input percentile
+        DThresholds(imonth).(pctLabels(ipct)) = monthlyDThresholds(:,:,ipct);
+    end
+    % Add beta parameters to structure array
+    DThresholds(imonth).a = a; DThresholds(imonth).b = b;
+
+    disp(['End of Month ' num2str(imonth)]) % Display progress in code block
+end % imonth
 
 end %function
