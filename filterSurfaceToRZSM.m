@@ -2,7 +2,7 @@ function RZSM = filterSurfaceToRZSM(avgSM,filterTimeLength)
 % Function that returns root-zone soil moisture using Exponential Time
 % Filter given a surface soil moisture matrix
 
-% INPUT: avgSM = 
+% INPUT: avgSM = structure array with fields SM, startDate, centerDate, endDate
 %        filterTimeLength = 
 % OUTPUT: RZSM = 
 
