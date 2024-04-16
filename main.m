@@ -60,18 +60,17 @@ title('RZSM: (e^{-x})')
 
 
 %% Create filtered data from averaged data
-% load('output/DThresholdsAfrica_8daySurface.mat','centerDatePeriod')
 load('output/avgSM_Africa_8day.mat','avgSM_Africa')
-RZSM_Africa = filterSurfaceToRZSM(avgSM_Africa,60 );
+RZSM_Africa = filterSurfaceToRZSM(avgSM_Africa,60);
 save('output/RZSM_Africa.mat','RZSM_Africa','-v7.3')
 
 %% Create filtered drought thresholds
-%load('output/RZSM_Africa.mat','RZSM_Africa')
+load('output/RZSM_Africa.mat','RZSM_Africa')
 load('output/porosityAfrica.mat','porosityAfrica')
 pct = [0.50, 0.30, 0.21, 0.11, 0.06, 0.03];
 pctLabels = ["Median","D0","D1","D2","D3","D4"];
 
-D_AfricaRoot = calculateDThresholds(avgSM_Africa,porosityAfrica,pct,pctLabels);
+D_AfricaRoot = calculateDThresholds(RZSM_Africa,porosityAfrica,pct,pctLabels);
 save('output/DThresholdsAfrica_8dayRoot.mat', 'D_AfricaRoot','-v7.3')
 
 %% Time Series for Africa
@@ -79,9 +78,9 @@ Nperiod = length(RZSM_Africa);
 [Nlat,Nlon] = size(RZSM_Africa(1).SM);
 RZSM_matrix = NaN(Nlat,Nlon,Nperiod);
 datesArray = NaT(Nperiod,1);
-DArray = NaN(Nlat,Nlon,)
+% DArray = NaN(Nlat,Nlon,)
 for iperiod = 1:Nperiod
     RZSM_matrix(:,:,iperiod) = RZSM(iperiod).SM;
     datesArray(iperiod) = RZSM(iperiod).centerDate;
 end
-drawTimeSeriesPlot('Africa',datesArray,)
+% drawTimeSeriesPlot('Africa',datesArray,)
