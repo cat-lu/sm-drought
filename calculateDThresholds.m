@@ -13,14 +13,15 @@ function DThresholds = calculateDThresholds(avgSM,porosity,pct,pctLabels)
 %                      parameters)
 
 % Range of desired inputted dates
-Nperiod = length(avgSM); % Number of time periods
+% Nperiod = length(avgSM); % Number of time periods
 [Nlat,Nlon] = size(avgSM(1).SM);
 
 % Combine SM into single 3D matrix
-SM_matrix = NaN(Nlat,Nlon,Nperiod);
-for iperiod = 1:Nperiod
-    SM_matrix(:,:,iperiod) = avgSM(iperiod).SM;
-end
+SM_matrix = transformStructTo3DMatrix(avgSM,'SM');
+% SM_matrix = NaN(Nlat,Nlon,Nperiod);
+% for iperiod = 1:Nperiod
+%     SM_matrix(:,:,iperiod) = avgSM(iperiod).SM;
+% end
 
 assert(isequal(size(avgSM(1).SM),size(porosity)),...
        'Sizes of SM and porosity matrices do not match')
@@ -34,7 +35,7 @@ DThresholds = struct('Month',{"Jan","Feb","Mar","Apr","May","Jun","Jul",...
 for imonth = 1:12
     [~, monthOfCenter] = ymd([avgSM.centerDate]); % Find month of center dates
     monthIndex = find(monthOfCenter == imonth);
-    monthlyDThresholds = NaN(Nlon,Nlat,length(pct)); % D Thresholds for 1 month, all coords
+    monthlyDThresholds = NaN(Nlat,Nlon,length(pct)); % D Thresholds for 1 month, all coords
     % Initialize beta parameters (a,b) for each month
     a = NaN(Nlat,Nlon); 
     b = NaN(Nlat,Nlon);
