@@ -1,4 +1,4 @@
-% Main code block for IPCC-defined regions
+%% Main code block for regions in Africa
 clear; clc
 load('\Users\cathe\Repos\sm-drought\output\avgSM_Africa_8day.mat')
 load('\Users\cathe\Repos\sm-drought\output\SM_Africa_shapefile.mat','lat','lon')
@@ -81,14 +81,20 @@ DNames = ["D0","D1","D2","D3","D4"];
 for i = 1:length(AfricaRegionNames)
     currentRegion = regionSHP(i);
     % Cut data based on coordinates compared to SMAP data
-    [regionSM,regionlat,regionlon] = cut3D(SM_matrix,coordsAfrica.Lat,coordsAfrica.Lon,currentRegion);        
-    regionDpercent = avgSM_Africa; %add D percent info to current structure array
+    [regionSM,regionlat,regionlon] = cut3D(SM_matrix,coordsAfrica.Lat,coordsAfrica.Lon,currentRegion);  
+
+    % regionDpercent = avgSM_Africa; %add D percent info to current structure array
+    regionDpercent = transformMatrix3DToStruct(regionSM,avgSM_Africa,'SM');
+
+    D_RegionalSurface = rmfield(D_AfricaSurface,{'Median','a','b'}); % create regional D struct
+
     % Calculate percent area in D0-D4
     for D = 1:length(DNames)
         D_matrix = transformStructTo3DMatrix(D_AfricaSurface,DNames(D));
         regionD = cut3D(D_matrix,coordsAfrica.Lat,coordsAfrica.Lon,currentRegion);
-        regionDpercent = calculateTimeSeries(regionDpercent,D_AfricaSurface,DNames(D)); % Add new field
-    end
+        D_RegionalSurface = transformMatrix3DToStruct(regionD,D_RegionalSurface,DNames(D));
+        regionDpercent = calculateTimeSeries(regionDpercent,D_RegionalSurface,DNames(D)); % Add new field
+    end%D
 
     % Add data into structure array
     AfricaRegions(i).Acronym = currentRegion.Acronym;
@@ -100,8 +106,8 @@ for i = 1:length(AfricaRegionNames)
 end
 save('output\AfricaRegions.mat','AfricaRegions','-v7.3')
 %% Plot regional time series (SM)
-load('output\AfricaRegions.mat','AfricaRegions')
-load('output\avgSM_Africa_8day.mat', 'missingDatePeriods')
+% load('output\AfricaRegions.mat','AfricaRegions')
+% load('output\avgSM_Africa_8day.mat', 'missingDatePeriods')
 DNames = ["D0","D1","D2","D3","D4"];
 DColors = ["#ffec52","#ffdb6b","#ff9f0f","#ef482a","#9d2001"];
 
@@ -117,7 +123,7 @@ for iregion = 1:length(AfricaRegions)
         yearOfCenterMissing = ymd(missingDatePeriods(:,centerInd));
         missingDatesInYear = [missingDatePeriods(yearOfCenterMissing==y,:)];
 
-        fig = figure('Position',[100 200 1400 500]);
+        fig = figure('Position',[100 200 1800 500]);
 
         for D = 1:length(DNames)
             field = "percentIn"+DNames(D);
@@ -126,8 +132,8 @@ for iregion = 1:length(AfricaRegions)
             drawTimeSeriesPlot(fig,AfricaRegions(iregion).Acronym,datesInYear,missingDatesInYear,percentDInYear,DNames(D),DColors(D))
         end %D Thresholds
         hold off;
-        saveas(gcf,['output/Figures/RegionalResults/TimeSeries/TimeSeries_',num2str(y),'_',AfricaRegions(iregion).Acronym],'jpeg')
-        saveas(gcf,['output/Figures/RegionalResults/TimeSeries/fig/TimeSeries_',num2str(y),'_',AfricaRegions(iregion).Acronym],'fig')
+        saveas(gcf,['output/Figures/RegionalResults/TimeSeries/noTitle/TimeSeries_',num2str(y),'_',AfricaRegions(iregion).Acronym],'jpeg')
+        saveas(gcf,['output/Figures/RegionalResults/TimeSeries/noTitle/fig/TimeSeries_',num2str(y),'_',AfricaRegions(iregion).Acronym],'fig')
 
     end %year
 end %iregion
@@ -149,12 +155,22 @@ for i = 1:length(AfricaRegionNames)
     [regionSM,regionlat,regionlon] = cut3D(RZSM_matrix,coordsAfrica.Lat,coordsAfrica.Lon,currentRegion);    
     % [regionD] = cut4D(D_AfricaRoot,lat,lon,currentRegion);
     
-    regionDpercent = RZSM_Africa;
+    regionDpercent = transformMatrix3DToStruct(regionSM,RZSM_Africa,'SM');
+    % for iperiod = 1:length(regionDpercent)
+    %     regionDpercent(iperiod).SM = regionSM(:,:,iperiod); % Change SM field to region-specific SM
+    % end%iperiod
+    D_RegionalRoot = rmfield(D_AfricaRoot,{'Median','a','b'}); % create regional D struct
+
     % Calculate percent area in D0-D4
     for D = 1:length(DNames)
         D_matrix = transformStructTo3DMatrix(D_AfricaRoot,DNames(D));
         regionD = cut3D(D_matrix,coordsAfrica.Lat,coordsAfrica.Lon,currentRegion);
-        regionDpercent = calculateTimeSeries(regionDpercent,D_AfricaRoot,DNames(D)); % Add new field
+        D_RegionalRoot = transformMatrix3DToStruct(regionD,D_RegionalRoot,DNames(D));
+        % for imonth = 1:length(D_RegionalRoot)
+        %     D_RegionalRoot(imonth).(DNames(D)) = regionD(:,:,imonth);
+        % end %imonth
+
+        regionDpercent = calculateTimeSeries(regionDpercent,D_RegionalRoot,DNames(D)); % Add new field
     end
 
     % Add data into structure array
@@ -165,7 +181,7 @@ for i = 1:length(AfricaRegionNames)
     filteredAfricaRegions(i).Data = regionDpercent;
 
 end
-save('output\filteredAfricaRegions.mat','filteredAfricaRegions','-v7.3')
+save('output\filteredAfricaRegions2.mat','filteredAfricaRegions2','-v7.3')
 %% Plot regional time series (filtered)
 load('output\filteredAfricaRegions.mat','filteredAfricaRegions')
 load('output\avgSM_Africa_8day.mat', 'missingDatePeriods')
@@ -188,7 +204,7 @@ for iregion = 1:length(filteredAfricaRegions)
         % yearvec = yearvec(:,1);
         % datesInYear = centerDatePeriod(yearvec==y);
 
-        fig = figure('Position',[100 200 1400 500]);
+        fig = figure('Position',[100 200 1800 500]);
         % newfig = figure('Position',[100 200 1400 500]);
 
         for D = 1:length(DNames)
@@ -203,8 +219,8 @@ for iregion = 1:length(filteredAfricaRegions)
             drawTimeSeriesPlot(fig,filteredAfricaRegions(iregion).Acronym,datesInYear,missingDatesInYear,percentDInYear,DNames(D),DColors(D))
         end %D Thresholds
         hold off;
-        saveas(gcf,['output/Figures/RegionalResults/TimeSeriesFiltered/TimeSeries_',num2str(y),'_',filteredAfricaRegions(iregion).Acronym],'jpeg')
-        saveas(gcf,['output/Figures/RegionalResults/TimeSeriesFiltered/fig/TimeSeries_',num2str(y),'_',filteredAfricaRegions(iregion).Acronym],'fig')
+        saveas(gcf,['output/Figures/RegionalResults/TimeSeriesFiltered/noTitle/TimeSeries_',num2str(y),'_',filteredAfricaRegions(iregion).Acronym],'jpeg')
+        saveas(gcf,['output/Figures/RegionalResults/TimeSeriesFiltered/noTitle/fig/TimeSeries_',num2str(y),'_',filteredAfricaRegions(iregion).Acronym],'fig')
 
     end %year
     % drawTimeSeriesPlot(regionalTimeSeries(i).Acronym,centerDatePeriod,regionalTimeSeries(i).Dpercent)

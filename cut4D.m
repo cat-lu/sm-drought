@@ -15,7 +15,7 @@ Ngroups = size(inputMatrix,4);
 cutMatrix4D = NaN(Nlat,Nlon,Ndate,Ngroups);
 
 for i = 1:Ngroups
-    [groupMatrix,lat,lon] = cut3D(inputMatrix,inputLat,inputLon,boundary);
+    [groupMatrix,lat,lon] = cut3D(inputMatrix(:,:,:,i),inputLat,inputLon,boundary);
     cutMatrix4D(:,:,:,i) = groupMatrix;
 end %Ngroups
 

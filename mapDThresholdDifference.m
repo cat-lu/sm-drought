@@ -18,7 +18,7 @@ pcolor(lon,lat,D_diff);
 hold on
 shading flat
 colormap(redWhiteGradient)
-colorbar
+% colorbar()
 
 % P = prctile(D_diff,[10 90],'all');
 % disp(P);

@@ -36,13 +36,14 @@ for iperiod = 1:size(missingDates,1)
     % disp(['start ',string(missingDates(iperiod,1)),'end ',string(missingDates(iperiod,end))])
 end
 
-title([name ' Percent Area in Drought Monitor Categories'])
+% title([name ' Percent Area in Drought Monitor Categories'])
 xlabel('Date')
 ylabel(['Percent Area (%) of ' name])
 % xlim([datesArray(1),datesArray(end)])
 xlim([datetime(year(datesArray(1)),1,1),datetime(year(datesArray(end)),12,31)])
-ylim([0 60])
-legend
+ylim([0 100])
+% legend('Location','northoutside','Orientation','horizontal')
+% legend('boxoff')
 % xticklabels({"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"})
 
 end
