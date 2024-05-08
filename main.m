@@ -116,10 +116,10 @@ for imonth = 1:12
     end % D
 end % imonth
 %% Find drought classifications (SM)
-% load('output/avgSM_Africa_8day.mat','avgSM_Africa')
-% load('output/DThresholdsAfrica_8daySurface.mat','D_AfricaSurface')
-SM_withDroughtLabels2 = classifyWithDroughtCategories(avgSM_Africa,D_AfricaSurface);
-%save('output/avgSM_withDroughtLabels_Africa_8day.mat','SM_withDroughtLabels','-v7.3')
+load('output/avgSM_Africa_8day.mat','avgSM_Africa')
+load('output/DThresholdsAfrica_8daySurface.mat','D_AfricaSurface')
+SM_withDroughtLabels = classifyWithDroughtCategories(avgSM_Africa,D_AfricaSurface);
+save('output/avgSM_withDroughtLabels_Africa_8day.mat','SM_withDroughtLabels','-v7.3')
 %% Map drought classifications (SM)
 % load('output/avgSM_withDroughtLabels_Africa_8day.mat','SM_withDroughtLabels')
 % load('output/SM_Africa_shapefile.mat','coordsAfrica')
@@ -130,5 +130,54 @@ mapDroughtLabels(fig,SM_withDroughtLabels(200).droughtLabels,coordsAfrica.Lat,co
 %% Find drought classifications (SM) for filtered data
 % load('output/avgSM_Africa_8day.mat','avgSM_Africa')
 % load('output/DThresholdsAfrica_8daySurface.mat','D_AfricaSurface')
-SM_withDroughtLabels2 = classifyWithDroughtCategories(avgSM_Africa,D_AfricaSurface);
-%save('output/avgSM_withDroughtLabels_Africa_8day.mat','SM_withDroughtLabels','-v7.3')
+RZSM_withDroughtLabels = classifyWithDroughtCategories(avgSM_Africa,D_AfricaSurface);
+%save('output/RZSM_withDroughtLabels_Africa_8day.mat','RZSM_withDroughtLabels','-v7.3')
+%% Aggregate periods using percentiles to categorize drought
+load('output/DThresholdsAfrica_8daySurface.mat','D_AfricaSurface')
+load('output/avgSM_Africa_8day.mat','avgSM_Africa')
+load('output/porosityAfrica.mat','porosityAfrica')
+pct = [0.30, 0.21, 0.11, 0.06, 0.03]; % Percentiles of D0-D4 drought
+pctValues = [0 1 2 3 4]; % Values correspond to D0-D4 drought
+startDate = datetime(2015,04,01);
+endDate = datetime(2023,12,02);
+
+aggPct_Africa = aggregateSMPercentilesToMonth(startDate,endDate,...
+                D_AfricaSurface,avgSM_Africa,pct,pctValues,porosityAfrica);
+save('output/aggregatedPercentiles_withDroughtLabels_Africa.mat','aggPct_Africa')
+%% Aggregated monthly drought maps
+% load('output/aggregatedPercentiles_withDroughtLabels_Africa.mat','aggPct_Africa')
+load('output/SM_Africa_shapefile.mat','coordsAfrica')
+load coastlines
+
+for imonth = 1:length(aggPct_Africa)
+    fig = figure('Position',[500 200 600 500]);
+    mapDroughtLabels(fig,aggPct_Africa(imonth).droughtLabels,coordsAfrica.Lat,coordsAfrica.Lon,coastlat,coastlon)
+    monthName = month(datetime(1,aggPct_Africa(imonth).Month,1),'name');
+    titleString = strcat(monthName," ",num2str(aggPct_Africa(imonth).Year));
+    title(titleString)
+    saveas(gcf,strcat('output/Figures/AfricaResults/AggregatedMapsD0-D4/Year',...
+        num2str(aggPct_Africa(imonth).Year),'_Month',num2str(aggPct_Africa(imonth).Month)),'jpeg')
+    saveas(gcf,strcat('output/Figures/AfricaResults/AggregatedMapsD0-D4/fig/Year',...
+        num2str(aggPct_Africa(imonth).Year),'_Month',num2str(aggPct_Africa(imonth).Month)),'fig')
+
+end % imonth    
+%% Individual period drought maps
+load('output/avgSM_withDroughtLabels_Africa_8day.mat','SM_withDroughtLabels')
+load('output/SM_Africa_shapefile.mat','coordsAfrica')
+load coastlines
+
+for iperiod = 1:length(SM_withDroughtLabels)
+    fig = figure('Position',[500 200 600 500]);
+    mapDroughtLabels(fig,SM_withDroughtLabels(iperiod).droughtLabels,coordsAfrica.Lat,coordsAfrica.Lon,coastlat,coastlon)
+    
+    % Title of plot
+    startStr = string(SM_withDroughtLabels(iperiod).startDate,'MMM dd, yyyy');
+    endStr = string(SM_withDroughtLabels(iperiod).endDate,'MMM dd, yyyy');
+    titleString = strcat(startStr," - ",endStr);
+    title(titleString)
+
+    saveStr = string(SM_withDroughtLabels(iperiod).centerDate,'yyyy_MM_dd');
+    saveas(gcf,strcat('output/Figures/AfricaResults/IndividualMapsD0-D4/',saveStr),'jpeg')
+    saveas(gcf,strcat('output/Figures/AfricaResults/IndividualMapsD0-D4/fig/',saveStr),'fig')
+
+end % imonth   
