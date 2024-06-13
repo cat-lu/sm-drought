@@ -1,7 +1,8 @@
 function [SM_combined,coords,missingDates] = cutAndCombineDailySM(folder,startDate,endDate,boundary)
 
 % Function that combines individual SMAP files (.mat) into one matrix given
-% folder directory and date range (requires access to daily SMAP files)
+% folder directory and date range (requires access to daily SMAP files and 
+% SMAP coordinates)
 % Note: Days with missing SMAP data will show up as array of NaNs
 
 % INPUT: folder = directory of folder with individual SMAP files

@@ -127,11 +127,11 @@ load coastlines
 fig = figure;
 mapDroughtLabels(fig,SM_withDroughtLabels(200).droughtLabels,coordsAfrica.Lat,coordsAfrica.Lon,coastlat,coastlon)
 % latlon = 308,422
-%% Find drought classifications (SM) for filtered data
-% load('output/avgSM_Africa_8day.mat','avgSM_Africa')
-% load('output/DThresholdsAfrica_8daySurface.mat','D_AfricaSurface')
-RZSM_withDroughtLabels = classifyWithDroughtCategories(avgSM_Africa,D_AfricaSurface);
-%save('output/RZSM_withDroughtLabels_Africa_8day.mat','RZSM_withDroughtLabels','-v7.3')
+%% Find drought classifications (RZSM) for filtered data
+load('output/RZSM_Africa.mat','RZSM_Africa')
+load('output/DThresholdsAfrica_8dayRoot.mat','D_AfricaRoot')
+RZSM_withDroughtLabels = classifyWithDroughtCategories(RZSM_Africa,D_AfricaRoot);
+save('output/RZSM_withDroughtLabels_Africa_8day.mat','RZSM_withDroughtLabels','-v7.3')
 %% Aggregate periods using percentiles to categorize drought
 load('output/DThresholdsAfrica_8daySurface.mat','D_AfricaSurface')
 load('output/avgSM_Africa_8day.mat','avgSM_Africa')

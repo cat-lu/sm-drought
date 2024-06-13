@@ -4,6 +4,12 @@ load('output/SM_Africa_shapefile.mat','coordsAfrica')
 load('output/avgSM_Africa_8day.mat', 'avgSM_Africa');
 load('output/DThresholdsAfrica_8daySurface.mat','D_AfricaSurface')
 load('output/porosityAfrica.mat')
+%% Cut and combine daily soil moisture files using Africa shapefile
+worldFile = 'input\World_Continents\World_Continents.shp';
+world = shaperead(worldFile,'UseGeoCoords',true);
+row = find(strcmp({world.CONTINENT},'Africa')==1); %Find row exclusive to Africa
+shapeAfrica = world(row);
+geoAfrica = checkCoordinateReferenceSystem(worldFile,shapeAfrica); %Return geocrs if not already
 %% 
 % Choose lat-lon coordinates
 a_param = transformStructTo3DMatrix(D_AfricaSurface,'a'); 
@@ -44,26 +50,38 @@ legend('Location','northeast')
 hold off
 %% location of plot
 figure(2) 
+ilat = 300; ilon = 250;
 geoshow(geoAfrica,'FaceColor','green','FaceAlpha',0.1); hold on
-scatter(lon(ilat,ilon),lat(ilat,ilon),50,'filled')
+scatter(coordsAfrica.Lon(ilat,ilon),coordsAfrica.Lat(ilat,ilon),50,'filled')
 xlim([-30 65])
 grid('minor')
 xlabel('Longitude (deg)')
 ylabel('Latitude (deg)')
 %% Plot of drought thresholds
 figure(3)
+% ilat = 500; ilon = 600;
+ilat = 300; ilon = 250;
 months = 1:12;
 hex = ["#e6ddd5","#ffff00","#fcd37f","#ffaa00","#e60000","#730000"];
-plot(squeeze(D_AfricaSurface(ilat,ilon,:,1)),'DisplayName','Median Soil Moisture','Color',hex(1),'LineWidth',3); hold on
-area(squeeze(D_AfricaSurface(ilat,ilon,:,2)),'DisplayName','D0','FaceColor',hex(2),'EdgeColor',hex(2)); hold on
-area(squeeze(D_AfricaSurface(ilat,ilon,:,3)),'DisplayName','D1','FaceColor',hex(3),'EdgeColor',hex(3)); hold on
-area(squeeze(D_AfricaSurface(ilat,ilon,:,4)),'DisplayName','D2','FaceColor',hex(4),'EdgeColor',hex(4)); hold on
-area(squeeze(D_AfricaSurface(ilat,ilon,:,5)),'DisplayName','D3','FaceColor',hex(5),'EdgeColor',hex(5)); hold on
-area(squeeze(D_AfricaSurface(ilat,ilon,:,6)),'DisplayName','D4','FaceColor',hex(6),'EdgeColor',hex(6)); hold off
+DNames = ["Median","D0","D1","D2","D3","D4"];
+for D = 1:length(DNames)
+    D_matrix = transformStructTo3DMatrix(D_AfricaSurface,DNames(D));
+    if D == 1
+        plot(squeeze(D_matrix(ilat,ilon,:)),'DisplayName','Median Soil Moisture','Color',hex(1),'LineWidth',3); hold on
+    else
+        area(squeeze(D_matrix(ilat,ilon,:)),'DisplayName',DNames(D),'FaceColor',hex(D),'EdgeColor',hex(D)); hold on
+    end
+end
+% plot(squeeze(D_AfricaSurface(ilat,ilon,:,1)),'DisplayName','Median Soil Moisture','Color',hex(1),'LineWidth',3); hold on
+% area(squeeze(D_AfricaSurface(ilat,ilon,:,2)),'DisplayName','D0','FaceColor',hex(2),'EdgeColor',hex(2)); hold on
+% area(squeeze(D_AfricaSurface(ilat,ilon,:,3)),'DisplayName','D1','FaceColor',hex(3),'EdgeColor',hex(3)); hold on
+% area(squeeze(D_AfricaSurface(ilat,ilon,:,4)),'DisplayName','D2','FaceColor',hex(4),'EdgeColor',hex(4)); hold on
+% area(squeeze(D_AfricaSurface(ilat,ilon,:,5)),'DisplayName','D3','FaceColor',hex(5),'EdgeColor',hex(5)); hold on
+% area(squeeze(D_AfricaSurface(ilat,ilon,:,6)),'DisplayName','D4','FaceColor',hex(6),'EdgeColor',hex(6)); hold off
 set(gca,'xtick',1:12,'xticklabel',{'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'})
-legend('Location','northwest','FontSize',8,'Box','off')
+legend('Location','northwest','FontSize',10,'Box','off','Direction','normal')
 ylabel('Soil moisture (m^3/m^3)')
 xlabel('Month')
-title('Drought Thresholds',['Location: (',num2str(lat(ilat,ilon)),', ',num2str(lon(ilat,ilon)),')',])
+title('Drought Thresholds',['Location: (',num2str(coordsAfrica.Lat(ilat,ilon)),', ',num2str(coordsAfrica.Lon(ilat,ilon)),')',])
 ylim([0 0.3])
 xlim([1 12])

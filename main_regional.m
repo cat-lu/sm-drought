@@ -181,7 +181,7 @@ for i = 1:length(AfricaRegionNames)
     filteredAfricaRegions(i).Data = regionDpercent;
 
 end
-save('output\filteredAfricaRegions2.mat','filteredAfricaRegions2','-v7.3')
+save('output\filteredAfricaRegions.mat','filteredAfricaRegions','-v7.3')
 %% Plot regional time series (filtered)
 load('output\filteredAfricaRegions.mat','filteredAfricaRegions')
 load('output\avgSM_Africa_8day.mat', 'missingDatePeriods')
@@ -226,6 +226,51 @@ for iregion = 1:length(filteredAfricaRegions)
     % drawTimeSeriesPlot(regionalTimeSeries(i).Acronym,centerDatePeriod,regionalTimeSeries(i).Dpercent)
     % saveas(gcf,['test/redo/TimeSeries_' regionalTimeSeries(i).Acronym],'jpeg')
     % saveas(gcf,['test/redo/TimeSeries_' regionalTimeSeries(i).Acronym],'fig')
+end %iregion
+%% 2017-2018 Regional Time Series figure creation (SM)
+load('output\AfricaRegions.mat','AfricaRegions')
+DNames = ["D0","D1","D2","D3","D4"];
+DColors = ["#ffec52","#ffdb6b","#ff9f0f","#ef482a","#9d2001"];
+
+for iregion = 1:length(AfricaRegions)
+    currentRegionData = AfricaRegions(iregion).Data;
+    yearOfCenter = ymd([currentRegionData.centerDate]);
+    yearInd = yearOfCenter==2017|yearOfCenter==2018;
+    datesInYear=[currentRegionData(yearInd).centerDate]';
+    fig = figure('Position',[100 200 1800 500]);
+    for D = 1:length(DNames)
+        field = "percentIn"+DNames(D);
+        percentD = [currentRegionData.(field)]';
+        percentDInYear = percentD(yearInd);
+        drawTimeSeriesPlot(fig,AfricaRegions(iregion).Acronym,datesInYear,[],percentDInYear,DNames(D),DColors(D))
+    end %D Thresholds
+    hold off;
+    saveas(gcf,['output/Figures/RegionalResults/2017-18TimeSeries/TimeSeries_',AfricaRegions(iregion).Acronym],'jpeg')
+    saveas(gcf,['output/Figures/RegionalResults/2017-18TimeSeries/fig/TimeSeries_',AfricaRegions(iregion).Acronym],'fig')
+
+end %iregion
+%% 2017-2018 Regional Time Series figure creation (RZSM)
+load('output\filteredAfricaRegions.mat','filteredAfricaRegions')
+DNames = ["D0","D1","D2","D3","D4"];
+DColors = ["#ffec52","#ffdb6b","#ff9f0f","#ef482a","#9d2001"];
+
+for iregion = 1:length(filteredAfricaRegions)
+    currentRegionData = filteredAfricaRegions(iregion).Data;
+    yearOfCenter = ymd([currentRegionData.centerDate]);
+    yearInd = yearOfCenter==2017|yearOfCenter==2018;
+    datesInYear = [currentRegionData(yearInd).centerDate]';
+
+    fig = figure('Position',[100 200 1800 500]);
+    for D = 1:length(DNames)
+        field = "percentIn"+DNames(D);
+        percentD = [currentRegionData.(field)]';
+        percentDInYear = percentD(yearInd);
+        drawTimeSeriesPlot(fig,filteredAfricaRegions(iregion).Acronym,datesInYear,[],percentDInYear,DNames(D),DColors(D))
+    end %D Thresholds
+    hold off;
+    saveas(gcf,['output/Figures/RegionalResults/2017-18TimeSeriesFiltered/TimeSeries_',filteredAfricaRegions(iregion).Acronym],'jpeg')
+    saveas(gcf,['output/Figures/RegionalResults/2017-18TimeSeriesFiltered/fig/TimeSeries_',filteredAfricaRegions(iregion).Acronym],'fig')
+
 end %iregion
 %% Map of regions
 % load('output\regionalTimeSeries.mat')
