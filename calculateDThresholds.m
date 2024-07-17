@@ -1,28 +1,24 @@
 function DThresholds = calculateDThresholds(avgSM,porosity,pct,pctLabels)
 
-% Function that returns drought (D) thresholds given averaged soil moisture data
-% and set threshold percentiles
+% Function that returns drought (D) thresholds given averaged soil moisture
+% data, set threshold percentiles, and soil porosity characteristics
 
-% INPUT: avgSM = structure array with fields SM, startDate,
-%                 centerDate, endDate
-%        porosity = porosity matrix (size: Nlat x Nlon)
-%        pct = array of desired percentiles for beta distribution fitting
-%        pctLabels = string array of labels for desired percentiles
+% INPUT:  avgSM       = structure array with fields SM, startDate,
+%                       centerDate, endDate
+%         porosity    = porosity matrix for given area (size: Nlat x Nlon)
+%         pct         = array of desired percentiles for beta distribution fitting
+%         pctLabels   = string array of labels for desired percentiles
 % OUTPUT: DThresholds = structure array with fields Month, percentiles given
-%                      in pct, a, and b (beta distribution fitting
-%                      parameters)
+%                       in pctLabels, a, and b (beta distribution fitting
+%                       parameters)
 
-% Range of desired inputted dates
-% Nperiod = length(avgSM); % Number of time periods
+% Size of given SMAP area
 [Nlat,Nlon] = size(avgSM(1).SM);
 
 % Combine SM into single 3D matrix
 SM_matrix = transformStructTo3DMatrix(avgSM,'SM');
-% SM_matrix = NaN(Nlat,Nlon,Nperiod);
-% for iperiod = 1:Nperiod
-%     SM_matrix(:,:,iperiod) = avgSM(iperiod).SM;
-% end
 
+% Check size equalities
 assert(isequal(size(avgSM(1).SM),size(porosity)),...
        'Sizes of SM and porosity matrices do not match')
 assert(isequal(length(pct),length(pctLabels)),...
@@ -45,14 +41,17 @@ for imonth = 1:12
         disp(['Row ' num2str(ilat) ' of ' num2str(Nlat) ' in Month ' num2str(imonth)])
 
         for ilon = 1:Nlon        
-            % Location Relative Soil Saturation in [0,1] Range for 1 pixel in imonth
-            monthlyPixelSM = squeeze(SM_matrix(ilat,ilon,monthIndex))./ porosity(ilat,ilon); %#ok<FNDSB>
+            % Divide by location porosity for Location Relative Soil Saturation 
+            % in [0,1] Range for 1 pixel in imonth
+            monthlyPixelSM = squeeze(SM_matrix(ilat,ilon,monthIndex))./ porosity(ilat,ilon);
+            % NaN for any values outside [0,1] range
             monthlyPixelSM(monthlyPixelSM>1) = NaN;
             monthlyPixelSM(monthlyPixelSM<0) = NaN;
             % Remove NaN for betafit function
             isNull = find(isnan(monthlyPixelSM));
-            monthlyPixelSM(isNull) = []; %#ok<FNDSB>
-            
+            monthlyPixelSM(isNull) = []; 
+
+            % If enough SM values (<10) and std>0.01 (over land)
             if (length(monthlyPixelSM)>10 && std(monthlyPixelSM)>0.01)
                 % Maximum-Likelihood Estimate of Beta PDF Parameters
                 betaParameters = betafit(monthlyPixelSM);
@@ -68,6 +67,7 @@ for imonth = 1:12
     end % ilat
 
     for ipct = 1:length(pct) % Add to structure array for each input percentile
+        % Use given pctLabels input for fieldname
         DThresholds(imonth).(pctLabels(ipct)) = monthlyDThresholds(:,:,ipct);
     end
     % Add beta parameters to structure array

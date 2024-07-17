@@ -1,11 +1,15 @@
 function droughtLabels = classifyDroughtFromPercentiles(pctSM,pct,pctValues)
 
-% INPUT: pctSM = 2D array of percentiles calculated from SM and a and b
-%                parameters (size: Nlat x Nlon)
-%        pctLabels = Percentiles associated with drought
-%        labelValues = Numbered labels that correspond to pctLabels
-% OUTPUT: droughtLabels = 2D array of drought labels (values from
-%                         labelValues)
+% Function that classifies SM percentiles from a set area and date as
+% categories of drought (given by pct and pctValues) and returns these
+% drought labels. 
+% 
+% INPUT:  pctSM     = 2D array of percentiles calculated from SM values, a,
+%                     and b parameters (size: Nlat x Nlon)
+%         pct       = Percentiles associated with drought
+%         pctValues = Numbered labels that correspond to pct
+% OUTPUT: droughtLabels = 2D array of drought labels (same size as input)
+%                         consisting of values from pctValues 
 
 assert((length(pctValues)==length(pct)),...
     "Number of categories do not match with percentiles given")
@@ -13,7 +17,7 @@ assert((length(pctValues)==length(pct)),...
 % Find which percentile each pixel corresponds to
 count = zeros(size(pctSM));
 for ipct = 1:length(pctValues)
-    % Adds to count if less than percentile
+    % Adds to count if SM percentile is less than given percentile
     count(pctSM<=pct(ipct)) = count(pctSM<=pct(ipct))+1;
 end
 

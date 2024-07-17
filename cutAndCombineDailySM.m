@@ -5,13 +5,16 @@ function [SM_combined,coords,missingDates] = cutAndCombineDailySM(folder,startDa
 % SMAP coordinates)
 % Note: Days with missing SMAP data will show up as array of NaNs
 
-% INPUT: folder = directory of folder with individual SMAP files
-%        startDate = desired start date in array [yyyy,mm,dd]
-%        endDate = desired end date in array [yyyy,mm,dd]
-%        boundary = shapefile (geographic data structure array) 
-%                   OR bounding box [minlat,maxlat; minlon,maxlon]
-% OUTPUT: SM_combined = structure array with fields SM and Date
-%         coords = structure array with fields Lat and Lon
+% Daily SMAP files with global coverage found at 
+% https://nsidc.org/data/smap/data (login required)
+
+% INPUT: folder     = directory of folder with individual SMAP files
+%        startDate  = desired start date in array [yyyy,mm,dd]
+%        endDate    = desired end date in array [yyyy,mm,dd]
+%        boundary   = shapefile (geographic data structure array) 
+%                     OR bounding box [minlat,maxlat; minlon,maxlon]
+% OUTPUT: SM_combined  = structure array with fields SM and Date
+%         coords       = structure array with fields Lat and Lon
 %         missingDates = array of dates with no SMAP data
 
 % Load SMAP latitude and longitude coordinates in input folder
