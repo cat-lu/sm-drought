@@ -123,7 +123,7 @@ RZSM_withDroughtLabels = classifyWithDroughtCategories(RZSM_Africa,D_AfricaRoot)
 save('output/RZSM_withDroughtLabels_Africa_8day.mat','RZSM_withDroughtLabels','-v7.3')
 
 %% Aggregate periods using percentiles to categorize drought
-% Average the percentiles that soil moisture from the 8-day periods are in
+% Average the percentiles that the SM from 8-day periods are in
 % for each month, then categorize using D0-D4 percentiles
 load('output/DThresholdsAfrica_8daySurface.mat','D_AfricaSurface')
 load('output/avgSM_Africa_8day.mat','avgSM_Africa')
@@ -136,7 +136,7 @@ startDate = datetime(2015,04,01);
 endDate = datetime(2023,12,02);
 
 aggPct_Africa = aggregateSMPercentilesToMonth(startDate,endDate,...
-                D_AfricaSurface,avgSM_Africa,pct,pctValues,porosityAfrica);
+                avgSM_Africa,D_AfricaSurface,pct,pctValues,porosityAfrica);
 save('output/aggregatedPercentiles_withDroughtLabels_Africa.mat','aggPct_Africa')
 
 %% FIGURE: Aggregated monthly drought maps
@@ -181,3 +181,40 @@ for iperiod = 1:length(SM_withDroughtLabels)
     saveas(gcf,strcat('output/Figures/AfricaResults/IndividualMapsD0-D4/fig/',saveStr),'fig')
 
 end % imonth   
+
+%% Aggregate filtered periods using percentiles to categorize drought (RZSM)
+% Average the percentiles that the RZSM from 8-day periods are in
+% for each month, then categorize using D0-D4 percentiles
+load('output/DThresholdsAfrica_8dayRoot.mat','D_AfricaRoot')
+load('output/RZSM_Africa.mat','RZSM_Africa')
+load('output/porosityAfrica.mat','porosityAfrica')
+
+pct = [0.30, 0.21, 0.11, 0.06, 0.03]; % Percentiles of D0-D4 drought
+pctValues = [0 1 2 3 4]; % Values correspond to D0-D4 drought
+% Dates of available SMAP data
+startDate = datetime(2015,04,01);
+endDate = datetime(2023,12,02);
+
+aggPct_Africa = aggregateSMPercentilesToMonth(startDate,endDate,...
+                RZSM_Africa,D_AfricaRoot,pct,pctValues,porosityAfrica);
+save('output/filteredAggregatedPercentiles_withDroughtLabels_Africa.mat','aggPct_Africa')
+
+%% FIGURE: Aggregated filtered monthly drought maps (RZSM)
+% Plot drought labeled maps to emphasize most significant clusters of
+% drought (i.e. clusters that are prevalent throughout a given month)
+
+load('output/filteredAggregatedPercentiles_withDroughtLabels_Africa.mat','aggPct_Africa')
+load('output/SM_Africa_shapefile.mat','coordsAfrica')
+load coastlines
+
+for imonth = 1:length(aggPct_Africa)
+    fig = figure('Position',[500 200 600 500]);
+    mapDroughtLabels(fig,aggPct_Africa(imonth).droughtLabels,coordsAfrica.Lat,coordsAfrica.Lon,coastlat,coastlon)
+    monthName = month(datetime(1,aggPct_Africa(imonth).Month,1),'name');
+    titleString = strcat(monthName," ",num2str(aggPct_Africa(imonth).Year));
+    title(titleString)
+    saveas(gcf,strcat('output/Figures/AfricaResults/AggregatedMapsD0-D4_filtered/Year',...
+        num2str(aggPct_Africa(imonth).Year),'_Month',num2str(aggPct_Africa(imonth).Month)),'jpeg')
+    saveas(gcf,strcat('output/Figures/AfricaResults/AggregatedMapsD0-D4_filtered/fig/Year',...
+        num2str(aggPct_Africa(imonth).Year),'_Month',num2str(aggPct_Africa(imonth).Month)),'fig')
+end % imonth
