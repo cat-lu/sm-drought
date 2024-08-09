@@ -284,7 +284,6 @@ for iregion = 1:length(filteredAfricaRegions)
 end %iregion
 
 %% FIGURE: Map of created regions in Africa
-load('output\regionalTimeSeries.mat')
 regionSHP = shaperead('output\AfricaRegions\regionSHP.shp','UseGeoCoords',true);
 
 % Load shapefile of Africa border
