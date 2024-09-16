@@ -5,6 +5,8 @@ This repository contains MATLAB scripts for a drought monitoring methodology, pr
 The following scripts uses satellite surface soil moisture data (top 5 cm of soil column) from NASA's Soil Moisture Active Passive (SMAP) mission. The dataset used has temporal coverage from April 15th, 2015 to December 2nd, 2023 provided at an interpolated resolution of 9 km. The resulting figures are summarized in a thesis report, "Soil moisture-based drought monitoring using remote sensing over Africa". 
 
 # Scripts
+The provided code is split into four categories: main scripts (one for each shapefile: Africa, regions of Africa, and Angola), primary functions, figure-producing scripts and functions, and helper functions. The following image shows an overview of the drought estimation methodology. ![flowchart](https://github.com/cat-lu/sm-drought/blob/main/method_flowchart.png?raw=true)
+
 ### Main scripts:
 `main.m`: Drought monitoring methodology for Africa, producing month- and location-specific drought thresholds and subsequent time series and drought maps.
 
