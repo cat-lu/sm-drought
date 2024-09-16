@@ -65,7 +65,7 @@ The following scripts uses satellite surface soil moisture data (top 5 cm of soi
 
 # References
 The shapefiles for Africa, climate regions of Africa, and Angola are taken from the following sources:
-- Africa: [Esri World Continents layer] [http://www.arcgis.com/home/item.html?id=57c1ade4fa7c4e2384e6a23f2b3bd254]
-- Regions of Africa: 
-- Angola:
-- Angola Provinces: 
+- Africa: [Esri World Continents layer](http://www.arcgis.com/home/item.html?id=57c1ade4fa7c4e2384e6a23f2b3bd254)
+- Regions of Africa: Combination of regions from [Iturbide et al., 2020](https://essd.copernicus.org/articles/12/2959/2020/) and [IPCC AR5-WGI](https://www.ipcc-data.org/guidelines/pages/ar5_regions.html)
+- Angola: []()
+- Angola Provinces: [UNDP - CNIDAH](https://geodata.libraries.mit.edu/record/gismit:AO_F7PROVINCES_2005)
