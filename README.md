@@ -18,11 +18,11 @@ The provided code is split into four categories: main scripts (one for each shap
 ### Primary functions:
 `cutAndCombineDailySM.m`: Reduces SMAP file to a given area and combines daily individual SMAP files into single structure array of surface soil moisture values.
 
-`averageSoilMoisture.m`: Averages soil moisture data over a given time period
+`averageSoilMoisture.m`: Averages soil moisture data over a given time period.
 
-`filterSurfacetoRZSM.m`: Converts raw surface soil moisture data into root-zone soil moisture data using an exponential time filter. This function also takes the number of days for water to travel from the surface (top ~5cm of soil) to the root-zone (~200 cm) as an input. 
+`filterSurfacetoRZSM.m`: Converts raw surface soil moisture data into root-zone soil moisture data using an exponential time filter. This function also takes the number of days for water to travel from the surface (top ~5cm of soil) to the root-zone level(~200 cm) as an input. 
 
-`calculateDThresholds.m`: Calculates drought thresholds based on soil moisture data and inputted drought percentiles. Drought threshold values are specific to a month and coordinate and are calculated by fitting a beta distribution to historical soil moisture data. The USDM percentiles (table shown below) provide example drought percentiles to be used in this case.
+`calculateDThresholds.m`: Calculates drought thresholds based on soil moisture data and inputted drought percentiles. Drought threshold values are specific to a month and coordinate and are calculated by fitting a beta distribution to historical soil moisture data. The USDM percentiles (table shown below) provide example upper drought percentiles to be used in this case.
 
 | Category     | Description           | Percentile Range |
 |--------------|-----------------------|------------------|
@@ -35,27 +35,27 @@ The provided code is split into four categories: main scripts (one for each shap
 
 `classifyWithDroughtCategories.m`: Labels soil moisture data for each coordinate and each date period as No Drought, D0, D1, D2, D3, or D4 drought based on previously calculated drought thresholds. 
 
-`aggregateSMPercentilesToMonth.m`: Average soil moisture percentiles on a monthly basis and calculate subsequent drought labels. 
+`aggregateSMPercentilesToMonth.m`: Averages soil moisture percentiles on a monthly basis and calculates subsequent drought labels. 
 
-`calculateTimeSeries.m`: Calculate the percent area that a region is under D0-D4 drought conditions over time.
+`calculateTimeSeries.m`: Calculates the percent area that a region is under D0-D4 drought conditions at each time step.
 
 ### Figure-producing scripts and functions:
-`betaParameterizationPlot.m`: Visualize methodology of beta distribution fitting to historical soil moisture values for a reference location. 
+`betaParameterizationPlot.m`: Visualizes the methodology of beta distribution fitting for historical soil moisture values at a reference location. 
 
-`mapSoilMoisture.m`: Produce map of volumetric soil moisture values for a given area and date. 
+`mapSoilMoisture.m`: Produces map of volumetric soil moisture values for a given area and time period. 
 
-`mapDThresholdDifference.m`: Visualize and map differences between drought threshold values (e.g. D1-D2) in terms of volumetric soil moisture.
+`mapDThresholdDifference.m`: Visualizes and maps the differences between drought threshold values (e.g. D1-D2) in terms of volumetric soil moisture.
 
-`mapDroughtLabels.m`: Produce map of drought categories (D0-D4) or no drought/missing data for a given area and date. 
+`mapDroughtLabels.m`: Produces map of drought labels (i.e. D0-D4, no drought) for a given area and time period. 
 
-`drawTimeSeriesPlot.m`: Visualize time series of percent area that a region is in D0-D4 drought. 
+`drawTimeSeriesPlot.m`: Visualizes time series of percent area that a region is in D0-D4 drought. 
 
 ### Helper functions:
-`cut2D.m`: Reduce a 2D array (i.e. Nlat x Nlon) to coordinates that fall within a given shapefile or bounding box. 
+`cut2D.m`: Reduces a 2D array (i.e. Nlat x Nlon) to coordinates that fall within a given shapefile or bounding box. 
 
-`cut3D.m`: Reduce a 3D array (i.e. Nlat x Nlon x Ndates) on the third dimension to coordinates that fall within a given shapefile or bounding box. 
+`cut3D.m`: Reduces a 3D array (i.e. Nlat x Nlon x Ndates) on the third dimension to coordinates that fall within a given shapefile or bounding box. 
 
-`cutStruct3D.m`: Reduce each value in a structure array, which is a 2D array, to coordinates that fall within a given shapefile or bounding box. 
+`cutStruct3D.m`: Reduces each value in a structure array, which is a 2D array, to coordinates that fall within a given shapefile or bounding box. 
 
 `transformMatrix3DToStruct.m`: Converts a 3D array (i.e. Nlat x Nlon x Ndates) into a specified field in a structure array. Each index in the structure array is a 2D array (i.e. Nlat x Nlon). 
 
@@ -69,5 +69,4 @@ The provided code is split into four categories: main scripts (one for each shap
 The shapefiles for Africa, climate regions of Africa, and Angola are taken from the following sources:
 - Africa: [Esri World Continents layer](http://www.arcgis.com/home/item.html?id=57c1ade4fa7c4e2384e6a23f2b3bd254)
 - Regions of Africa: Combination of regions from [Iturbide et al., 2020](https://essd.copernicus.org/articles/12/2959/2020/) and [IPCC AR5-WGI](https://www.ipcc-data.org/guidelines/pages/ar5_regions.html)
-- Angola: []()
-- Angola Provinces: [UNDP - CNIDAH](https://geodata.libraries.mit.edu/record/gismit:AO_F7PROVINCES_2005)
+- Angola & Angola Provinces: [UNDP - CNIDAH](https://geodata.libraries.mit.edu/record/gismit:AO_F7PROVINCES_2005)
